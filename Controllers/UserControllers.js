@@ -11,7 +11,7 @@ export const createUser= async (req,res)=>{
             where:{email : email}
         });
         if(exitinguser){
-            return res.json({error:"User already exists"},{status:400});
+            return res.json({error:"Email Alredy taken  ! please use anather one "},{status:400});
         }
         const newUser=await User.create({
             data:{
