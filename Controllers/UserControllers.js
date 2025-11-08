@@ -1,4 +1,3 @@
-import User from '../prisma/schema.prisma'
 import Prisma from '../DB/db.config.js';
 export const createUser= async (req,res)=>{
     try {
@@ -6,7 +5,7 @@ export const createUser= async (req,res)=>{
         if(!email || !password){
             return res.json({error:"Email and Password are required"},{status:400});
         }
-        const exitinguser=await Prisma.User.findunique({
+        const exitinguser=await Prisma.User.findUnique({
             where:{email : email}
         });
         if(exitinguser){
