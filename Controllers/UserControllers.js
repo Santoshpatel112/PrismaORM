@@ -13,7 +13,7 @@ export const createUser= async (req,res)=>{
         if(exitinguser){
             return res.json({error:"Email Alredy taken  ! please use anather one "},{status:400});
         }
-        const newUser=await User.create({
+        const newUser=await Prisma.User.create({
             data:{
                 email,
                 name,

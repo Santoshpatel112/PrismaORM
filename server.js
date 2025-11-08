@@ -8,7 +8,11 @@ app.get('/',(req,res)=>{
     res.send('Hello World');
 })
 
+//  Route file
+import route from './routes/index.js';
 
+app.use(express.json());
+app.use(route);
 
 
 app.listen(PORT,()=>{
