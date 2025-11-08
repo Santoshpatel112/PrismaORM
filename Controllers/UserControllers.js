@@ -1,13 +1,12 @@
 import User from '../prisma/schema.prisma'
 import Prisma from '../DB/db.config.js';
-import bcrypt from 'bcryptjs';
 export const createUser= async (req,res)=>{
     try {
         const {email,name,password}=req.body;
         if(!email || !password){
             return res.json({error:"Email and Password are required"},{status:400});
         }
-        const exitinguser=await Prisma.user.findunique({
+        const exitinguser=await Prisma.User.findunique({
             where:{email : email}
         });
         if(exitinguser){
