@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router =Router();
-import { createUser } from "../Controllers/UserControllers.js";
+import { createUser, updateUser } from "../Controllers/UserControllers.js";
 
-router.post('/',createUser)
-
+router.post('/', createUser);
+router.put('/:id', updateUser);
 export default router; 

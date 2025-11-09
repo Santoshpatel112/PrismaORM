@@ -2,9 +2,6 @@ import prisma from '../DB/db.config.js';
 
 export const createUser = async (req, res) => {
     try {
-        console.log('Content-Type:', req.headers['content-type']);
-        console.log('Body:', req.body);
-        
         const { email, name, password } = req.body;
         
         if (!email || !password) {
@@ -33,3 +30,36 @@ export const createUser = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
 }
+
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { email, name, password } = req.body;
+        
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(id) }
+        });
+        
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        
+        const updatedUser = await prisma.user.update({
+            where: { id: parseInt(id) },
+            data: {
+                ...(email && { email }),
+                ...(name && { name }),
+                ...(password && { password })
+            }
+        });
+        
+        return res.status(200).json({
+            message: "User updated successfully",
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+}
+
