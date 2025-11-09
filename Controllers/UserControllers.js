@@ -80,3 +80,32 @@ export const findAllUser=async (req,res)=>{
         });
     }
 }
+
+
+export const DeleteUser= async (req,res)=>{
+    try {
+        const userId=req.params.id;
+        const user=Prisma.User.findUnique({
+            where:{id:parseInt(userId)}
+        })
+        if(!user){
+            return res.status(400).json({
+                message:"user not found"
+            });
+        }
+
+            const deleteduser=Prisma.User.delete({
+                where :{id:userId},
+            })
+        return res.status(200).json({
+            message :"User deleted Sucessfully",
+            user :deleteduser
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.json({
+            message:"Error in Delted User"
+        },{status:500});
+    }
+}
