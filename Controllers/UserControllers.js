@@ -1,3 +1,4 @@
+import Prisma from '../DB/db.config.js';
 import prisma from '../DB/db.config.js';
 
 export const createUser = async (req, res) => {
@@ -63,3 +64,19 @@ export const updateUser = async (req, res) => {
     }
 }
 
+
+
+export const findAllUser=async (req,res)=>{
+    try {
+        const findUser=await Prisma.User.findMany();
+        return res.status(201).json({
+            message :"User fetch sucessfully",
+            User:findUser
+        })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message:"error in fetch all user "
+        });
+    }
+}
