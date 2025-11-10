@@ -29,111 +29,144 @@ export const createPost = async (req, res) => {
     }
 }
 
-
-export const ShowPost=async (req,res)=>{
+export const ShowPost = async (req, res) => {
     try {
-        const postId=req.params.id;
-        const post=await Prisma.post.findFirst({
-            where :{
-                PostId :Number(postId)
+        const postId = req.params.id;
+        const post = await prisma.post.findUnique({
+            where: {
+                id: Number(postId)
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
             }
-        })
-        return res.status(201).json({
-            message :"Post fetch Sucessfully",
-            Post :post
-        })
+        });
+        
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found"
+            });
+        }
+        
+        return res.status(200).json({
+            message: "Post fetched successfully",
+            post: post
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
-          message: "Somthing error occerd Unble to Seen Post",
-        })   
+            message: "Something went wrong. Unable to fetch post",
+            details: error.message
+        });
     }
 }
 
-
-export const FetchAllPost =async (req ,res)=>{
+export const FetchAllPost = async (req, res) => {
     try {
-      const postId = req.params.id;
-      const post = await Prisma.post.findMany({
-        where: {
-          postId: Number(postId),
-        },
-      });
-      return res.status(201).json({
-        message: "Post fetch Sucessfully",
-        Post: post,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        message: "Somthing error occerd Unble to Fetch All Post",
-      });
-    }
-}
-
-export const UpdatePost=async (req,res)=>{
-    try {
-        const postId=req.params.id;
-        const {title,decription}=req.body();
-        const post= await Prisma.post.findUnique({
-            where:{
-                id :parseInt(postId)
-            }
-        })
-        if(!post){
-            return res.status(400).json({
-                message :"Post Not Found"
-            })
-        }
-        const updatedPost= await Prisma.post.update({
-            where:{
-                id:parent(postId)
+        const posts = await prisma.post.findMany({
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
             },
-            data :{
-                title,
-                decription
+            orderBy: {
+                createdAt: 'desc'
             }
-        })
-        return res.status(201).json({
-            message :"Post updated Sucessfully",
-            Post :updatedPost
-        })
+        });
+        
+        return res.status(200).json({
+            message: "Posts fetched successfully",
+            count: posts.length,
+            posts: posts
+        });
     } catch (error) {
-         console.error(error);
-         return res.status(500).json({
-           message: "Somthing error occerd Unble to Update Post",
-         });
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong. Unable to fetch all posts",
+            details: error.message
+        });
     }
 }
 
-
-
-export const deletePost= async (req,res)=>{
+export const UpdatePost = async (req, res) => {
     try {
-        const id=req.params.id;
-        const post=await Prisma.post.findUnique({
-            where :{
-                id:parseInt(id)
+        const postId = req.params.id;
+        const { title, description } = req.body;
+        
+        const post = await prisma.post.findUnique({
+            where: {
+                id: parseInt(postId)
             }
-        })
-        if(!post){
-            return res.status(400).json({
-                message :"Post not fount"
-            })
+        });
+        
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found"
+            });
         }
-        const deletedPost =await Prisma.post.delete({
-            where:{
-                id:parent(id)
+        
+        const updatedPost = await prisma.post.update({
+            where: {
+                id: parseInt(postId)
+            },
+            data: {
+                ...(title && { title }),
+                ...(description && { description })
             }
-        })
-        return res.status(201).json({
-            message :"Post deleted Sucessfully",
-            Post :deletePost
-        })
+        });
+        
+        return res.status(200).json({
+            message: "Post updated successfully",
+            post: updatedPost
+        });
     } catch (error) {
-         console.error(error);
-         return res.status(500).json({
-           message: "Somthing error occerd Unble to Update Post",
-         });
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong. Unable to update post",
+            details: error.message
+        });
+    }
+}
+
+export const deletePost = async (req, res) => {
+    try {
+        const id = req.params.id;
+        
+        const post = await prisma.post.findUnique({
+            where: {
+                id: parseInt(id)
+            }
+        });
+        
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found"
+            });
+        }
+        
+        await prisma.post.delete({
+            where: {
+                id: parseInt(id)
+            }
+        });
+        
+        return res.status(200).json({
+            message: "Post deleted successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Something went wrong. Unable to delete post",
+            details: error.message
+        });
     }
 }
