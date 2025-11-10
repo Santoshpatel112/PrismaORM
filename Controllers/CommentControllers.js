@@ -60,3 +60,50 @@ export const createComment = async (req, res) => {
         });
     }
 }
+
+
+
+
+export const deleteComment = async (req, res) => {
+    try {
+        const id = req.params.id;
+        
+        const comment = await prisma.comment.findUnique({
+            where: {
+                id: id
+            }
+        });
+        
+        if (!comment) {
+            return res.status(404).json({
+                message: "Comment not found"
+            });
+        }
+
+        // Decrement comment count on the post
+        await prisma.post.update({
+            where: { id: comment.postid },
+            data: {
+                comment_count: {
+                    decrement: 1
+                }
+            }
+        });
+
+        await prisma.comment.delete({
+            where: {
+                id: id
+            }
+        });
+        
+        return res.status(200).json({
+            message: "Comment deleted successfully"
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Unable to delete comment",
+            details: error.message
+        });
+    }
+}
