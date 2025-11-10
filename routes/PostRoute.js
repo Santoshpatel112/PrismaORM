@@ -7,8 +7,6 @@ const router=Router();
    UpdatePost,
    ShowPost,
  } from "../Controllers/PostControllers.js";
-import { updateUser } from "../Controllers/UserControllers";
-
  router.post('/',createPost);
  router.delete('/:id',deletePost);
  router.get('/',FetchAllPost);

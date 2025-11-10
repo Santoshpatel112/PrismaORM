@@ -1,29 +1,31 @@
-import e from "express";
-import Prisma from "../DB/db.config";
+import prisma from "../DB/db.config.js";
 
-export const createPost=async (req,res)=>{
+export const createPost = async (req, res) => {
     try {
-        const {title ,description,user_id}=req.body();
-        if(!title ||!description ||! user_id){
-            return res.status(400).json({message :"all field required"});
+        const { title, description, userid } = req.body;
+        
+        if (!title || !description || !userid) {
+            return res.status(400).json({ message: "All fields required" });
         }
 
-        const newPost=await Prisma.post.create({
-            data:{
-                user_id :Number(user_id),
+        const newPost = await prisma.post.create({
+            data: {
+                userid: Number(userid),
                 title,
-                decription
+                description
             }
         });
+        
         return res.status(201).json({
-            message :"Post created Sucessfully",
-            Post :newPost
-        })
+            message: "Post created successfully",
+            post: newPost
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
-            message : "Somthing error occerd Unble to creat Post"
-        })
+            message: "Something went wrong. Unable to create post",
+            details: error.message
+        });
     }
 }
 
