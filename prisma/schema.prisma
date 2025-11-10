@@ -25,22 +25,22 @@ model User{
 }
 
 model Post{
-   id Int  @id @default(autoincrement())
-  user User @relation(fields: [user_id],references: [id] ,onDelete: Cascade)
-  user_id Int 
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userid Int 
   title String
-  decription String
+  description String
   comment Comment[]
-  comment_count BigInt @default(0)
+  comment_count Int @default(0)
   createdAt DateTime @default(now())
 }
 
 model Comment{
-   id String  @id @default(uuid())
-   post Post @relation(fields: [post_id],references: [id],onDelete: Cascade)
-   post_id Int
-   user User @relation(fields: [user_id],references: [id] ,onDelete: Cascade)
-   user_id Int
-   comment String
-   createdAt DateTime @default(now())
+  id String @id @default(uuid())
+  post Post @relation(fields: [postid], references: [id], onDelete: Cascade)
+  postid Int
+  user User @relation(fields: [userid], references: [id], onDelete: Cascade)
+  userid Int
+  comment String
+  createdAt DateTime @default(now())
 }
