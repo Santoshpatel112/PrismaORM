@@ -7,8 +7,10 @@ const router=Router();
    UpdatePost,
    ShowPost,
  } from "../Controllers/PostControllers.js";
- router.post('/',createPost);
- router.delete('/:id',deletePost);
- router.get('/',FetchAllPost);
- router.get('/',ShowPost);
- router.put('/:id',UpdatePost);
+router.post('/', createPost);
+router.delete('/:id', deletePost);
+router.get('/', FetchAllPost);
+router.get('/:id', ShowPost);
+router.put('/:id', UpdatePost);
+
+export default router;
